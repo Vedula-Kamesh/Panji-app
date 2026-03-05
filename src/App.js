@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import './App.css';
 
 // Layout & Auth
@@ -16,39 +16,49 @@ import Loans from './pages/Loans';
 import Finance from './pages/Finance';
 import Risk from './pages/Risk';
 import Support from './pages/Support';
-
-// Admin Pages
 import Settings from './pages/Settings';
-import ActivityLog from './pages/ActivityLog'; // NEW
-import Security from './pages/Security'; // NEW
+import ActivityLog from './pages/ActivityLog';
+import Security from './pages/Security';
+
+// --- ROUTE GUARD COMPONENT ---
+// This checks the memory. If not logged in, it redirects to /login.
+const ProtectedRoute = () => {
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Route */}
         <Route path="/login" element={<Login />} />
         
         {/* Protected Admin Routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          
-          <Route path="users" element={<Users />} />
-          <Route path="users/:id" element={<UserDetail />} />
-          
-          <Route path="orders" element={<Orders />} />
-          <Route path="orders/:id" element={<OrderDetail />} />
-          
-          <Route path="loans" element={<Loans />} />
-          <Route path="finance" element={<Finance />} />
-          <Route path="risk" element={<Risk />} />
-          <Route path="support" element={<Support />} />
-          
-          {/* Admin Profile Routes */}
-          <Route path="settings" element={<Settings />} />
-          <Route path="activity-log" element={<ActivityLog />} />
-          <Route path="security" element={<Security />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Layout />}>
+            {/* Auto-redirect root to dashboard */}
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="users/:id" element={<UserDetail />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<OrderDetail />} />
+            <Route path="loans" element={<Loans />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="risk" element={<Risk />} />
+            <Route path="support" element={<Support />} />
+            
+            {/* Admin Profile Routes */}
+            <Route path="settings" element={<Settings />} />
+            <Route path="activity-log" element={<ActivityLog />} />
+            <Route path="security" element={<Security />} />
+          </Route>
         </Route>
+        
+        {/* Catch-all: If user types a random URL, send them to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

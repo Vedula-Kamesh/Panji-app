@@ -8,9 +8,11 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault(); 
     
-    // Simple frontend mockup check
     if (credentials.username && credentials.password) {
-      localStorage.setItem('isAuthenticated', 'true');
+      // Save auth status AND the username to temporary session memory
+      sessionStorage.setItem('isAuthenticated', 'true');
+      sessionStorage.setItem('adminUsername', credentials.username);
+      
       navigate('/dashboard');
     } else {
       alert("Please enter both ID and Password.");
@@ -47,7 +49,6 @@ const Login = () => {
           </div>
           
           <button type="submit" className="login-btn">LOGIN</button>
-          <a href="#" className="forgot-link">FORGOTTEN YOUR PASSWORD?</a>
         </form>
       </div>
     </div>

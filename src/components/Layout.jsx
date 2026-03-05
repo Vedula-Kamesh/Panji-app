@@ -7,6 +7,10 @@ const Layout = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  // Read the dynamically saved username from the login screen
+  const adminName = sessionStorage.getItem('adminUsername') || 'Admin user';
+
+  // Close the dropdown if the user clicks anywhere outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -17,8 +21,9 @@ const Layout = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Handle the secure logout process
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
+    sessionStorage.clear(); // Wipes the memory clean so the back button is locked
     navigate('/login');
   };
 
@@ -41,6 +46,7 @@ const Layout = () => {
       {/* MAIN CONTENT AREA */}
       <div className="main-area">
         <header className="topbar">
+          {/* GLOBAL SEARCH */}
           <input 
             type="text" 
             className="search-input" 
@@ -54,24 +60,29 @@ const Layout = () => {
             
             {/* ADMIN PROFILE DROPDOWN */}
             <div ref={dropdownRef} style={{ position: 'relative' }}>
+              
+              {/* Profile Trigger Button */}
               <div 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '500', padding: '5px 10px', borderRadius: '8px', transition: 'background 0.2s', background: isProfileOpen ? '#F1F5F9' : 'transparent' }}
               >
-                <span style={{ fontSize: '18px' }}>👤</span> Admin user <span style={{ fontSize: '10px', marginLeft: '2px' }}>▼</span>
+                <span style={{ fontSize: '18px' }}>👤</span> {adminName} <span style={{ fontSize: '10px', marginLeft: '2px' }}>▼</span>
               </div>
 
+              {/* The Dropdown Menu */}
               {isProfileOpen && (
                 <div style={{
                   position: 'absolute', top: '50px', right: '0', background: 'white', 
                   boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: '12px', 
                   width: '220px', overflow: 'hidden', zIndex: 100, border: '1px solid #E2E8F0'
                 }}>
+                  {/* Header */}
                   <div style={{ padding: '16px', borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
-                    <p style={{ margin: 0, fontWeight: 'bold', fontSize: '14px', color: '#1E293B' }}>Super Admin</p>
+                    <p style={{ margin: 0, fontWeight: 'bold', fontSize: '14px', color: '#1E293B' }}>{adminName}</p>
                     <p style={{ margin: 0, fontSize: '12px', color: '#64748B', marginTop: '2px' }}>admin@panji.in</p>
                   </div>
                   
+                  {/* Links */}
                   <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
                     <li 
                       style={{ padding: '12px 16px', cursor: 'pointer', fontSize: '14px', display: 'flex', gap: '10px', alignItems: 'center', borderBottom: '1px solid #E2E8F0' }} 
@@ -101,9 +112,12 @@ const Layout = () => {
                 </div>
               )}
             </div>
+            {/* END ADMIN PROFILE DROPDOWN */}
+
           </div>
         </header>
 
+        {/* PAGE RENDER AREA */}
         <main className="page-content">
           <Outlet context={{ globalSearch }} /> 
         </main>
