@@ -6,22 +6,25 @@ import './App.css';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 
-// Pages
+// Main Pages
 import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import UserDetail from './pages/UserDetail';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Loans from './pages/Loans';
+import LoanDetail from './pages/LoanDetail'; // NEW
 import Finance from './pages/Finance';
 import Risk from './pages/Risk';
 import Support from './pages/Support';
+
+// Admin Profile Pages
 import Settings from './pages/Settings';
 import ActivityLog from './pages/ActivityLog';
 import Security from './pages/Security';
 
 // --- ROUTE GUARD COMPONENT ---
-// This checks the memory. If not logged in, it redirects to /login.
+// Blocks access to internal pages if the user hasn't logged in
 const ProtectedRoute = () => {
   const isAuthenticated = sessionStorage.getItem('isAuthenticated');
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
@@ -41,11 +44,17 @@ function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             
             <Route path="dashboard" element={<Dashboard />} />
+            
+            {/* Dynamic Modules */}
             <Route path="users" element={<Users />} />
             <Route path="users/:id" element={<UserDetail />} />
+            
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetail />} />
+            
             <Route path="loans" element={<Loans />} />
+            <Route path="loans/:id" element={<LoanDetail />} />
+            
             <Route path="finance" element={<Finance />} />
             <Route path="risk" element={<Risk />} />
             <Route path="support" element={<Support />} />

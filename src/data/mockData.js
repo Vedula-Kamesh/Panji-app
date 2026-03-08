@@ -26,22 +26,52 @@ export const fetchUsers = () => {
 
 // Append to src/data/mockData.js
 
+// Replace your existing fetchOrders and fetchLoans in src/data/mockData.js
+
 export const fetchOrders = () => {
   return Promise.resolve([
-    { id: "ORD-12456", retailer: "Rajesh Kumar", wholesaler: "ABC Distributors", amount: "₹45,000", paymentType: "Loan + UPI", loanUsed: "₹30,000", status: "completed", date: "20 Feb 2026" },
-    { id: "ORD-12455", retailer: "Priya Sharma", wholesaler: "XYZ Supplies", amount: "₹32,000", paymentType: "UPI", loanUsed: "-", status: "pending", date: "20 Feb 2026" },
-    { id: "ORD-12454", retailer: "Amit Patel", wholesaler: "Global Traders", amount: "₹78,000", paymentType: "Loan", loanUsed: "₹78,000", status: "processing", date: "19 Feb 2026" },
-    { id: "ORD-12453", retailer: "Sneha Reddy", wholesaler: "ABC Distributors", amount: "₹25,000", paymentType: "Bank Transfer", loanUsed: "-", status: "completed", date: "19 Feb 2026" },
-    { id: "ORD-12452", retailer: "Vikram Singh", wholesaler: "Metro Wholesale", amount: "₹54,000", paymentType: "Loan + UPI", loanUsed: "₹40,000", status: "failed", date: "18 Feb 2026" },
+    { 
+      id: "ORD-12456", retailer: "Rajesh Kumar", wholesaler: "ABC Distributors", amount: "₹45,000", paymentType: "Loan + UPI", loanUsed: "₹30,000", status: "completed", date: "20 Feb 2026",
+      items: [
+        { name: "Basmati Rice Premium (25kg)", qty: 5, price: "₹12,500" },
+        { name: "Aashirvaad Atta (10kg)", qty: 50, price: "₹22,500" },
+        { name: "Refined Sunflower Oil (15L)", qty: 5, price: "₹10,000" }
+      ],
+      tracking: [
+        { step: "Order Placed", time: "20 Feb, 10:00 AM", done: true },
+        { step: "Payment Confirmed", time: "20 Feb, 10:15 AM", done: true },
+        { step: "Shipped by Wholesaler", time: "21 Feb, 09:00 AM", done: true },
+        { step: "Delivered to Retailer", time: "22 Feb, 02:30 PM", done: true }
+      ]
+    },
+    { 
+      id: "ORD-12455", retailer: "Priya Sharma", wholesaler: "XYZ Supplies", amount: "₹32,000", paymentType: "UPI", loanUsed: "-", status: "pending", date: "20 Feb 2026",
+      items: [{ name: "Detergent Powder (5kg)", qty: 20, price: "₹32,000" }],
+      tracking: [
+        { step: "Order Placed", time: "20 Feb, 14:00 PM", done: true },
+        { step: "Payment Pending", time: "-", done: false },
+        { step: "Shipped by Wholesaler", time: "-", done: false },
+        { step: "Delivered to Retailer", time: "-", done: false }
+      ]
+    }
   ]);
 };
 
 export const fetchLoans = () => {
   return Promise.resolve([
-    { id: "LN-2001", retailer: "Rajesh Kumar", requested: "₹2.5L", approved: "₹2.5L", duration: "12 months", risk: 85, riskLabel: "Low Risk", status: "active", date: "10 Feb 2026" },
-    { id: "LN-2002", retailer: "Priya Sharma", requested: "₹3.0L", approved: "₹2.8L", duration: "12 months", risk: 78, riskLabel: "Medium Risk", status: "active", date: "08 Feb 2026" },
-    { id: "LN-2003", retailer: "Amit Patel", requested: "₹5.0L", approved: "-", duration: "18 months", risk: 45, riskLabel: "High Risk", status: "pending", date: "20 Feb 2026" },
-    { id: "LN-2004", retailer: "Sneha Reddy", requested: "₹1.8L", approved: "₹1.8L", duration: "6 months", risk: 92, riskLabel: "Low Risk", status: "completed", date: "05 Jan 2026" },
+    { 
+      id: "LN-2001", retailer: "Rajesh Kumar", requested: "₹2.5L", approved: "₹2.5L", duration: "12 months", risk: 85, riskLabel: "Low Risk", status: "active", date: "10 Feb 2026",
+      history: [
+        { pastId: "LN-1050", amount: "₹1.0L", repaidOn: "05 Jan 2026", status: "completed", delays: 0 },
+        { pastId: "LN-0820", amount: "₹50,000", repaidOn: "12 Oct 2025", status: "completed", delays: 0 }
+      ]
+    },
+    { 
+      id: "LN-2002", retailer: "Priya Sharma", requested: "₹3.0L", approved: "₹2.8L", duration: "12 months", risk: 78, riskLabel: "Medium Risk", status: "active", date: "08 Feb 2026",
+      history: [
+        { pastId: "LN-1102", amount: "₹2.0L", repaidOn: "10 Nov 2025", status: "completed", delays: 2 }
+      ]
+    }
   ]);
 };
 
