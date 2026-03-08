@@ -15,6 +15,16 @@ const Loans = () => {
 
   useEffect(() => { fetchLoans().then(setLoans); }, []);
 
+  const handleApprove = (id) => {
+    const confirm = window.confirm(`Approve loan request ${id}?`);
+    if (confirm) alert(`Loan ${id} approved successfully!`);
+  };
+
+  const handleReject = (id) => {
+    const confirm = window.confirm(`Reject loan request ${id}?`);
+    if (confirm) alert(`Loan ${id} has been rejected.`);
+  };
+
   const filteredData = loans.filter(loan => {
     const globalMatch = loan.retailer.toLowerCase().includes(globalSearch.toLowerCase()) || 
                         loan.id.toLowerCase().includes(globalSearch.toLowerCase());
@@ -43,21 +53,12 @@ const Loans = () => {
         />
         <div className="filters">
           <select className="filter-dropdown" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Pending</option>
-            <option>Completed</option>
+            <option>All Status</option><option>Active</option><option>Pending</option><option>Completed</option><option>Rejected</option>
           </select>
           <select className="filter-dropdown" value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
-            <option>All Risk Levels</option>
-            <option>Low Risk</option>
-            <option>Medium Risk</option>
-            <option>High Risk</option>
+            <option>All Risk Levels</option><option>Low Risk</option><option>Medium Risk</option><option>High Risk</option>
           </select>
-          <button 
-            className="btn-outline" 
-            onClick={() => downloadCSV(filteredData, 'Panji_Loans_Export')}
-          >
+          <button className="btn-outline" onClick={() => downloadCSV(filteredData, 'Panji_Loans_Export')}>
             Export Loans
           </button>
         </div>
@@ -85,9 +86,29 @@ const Loans = () => {
                   </span>
                 </td>
                 <td><span className={`status-badge ${l.status}`}>{l.status}</span></td>
-                <td className="table-actions">
-                  <button title="View" onClick={() => navigate(`/loans/${l.id}`)}>👁️</button>
+                
+                {/* DYNAMIC ACTIONS COLUMN */}
+                <td className="table-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <button title="View Details" onClick={() => navigate(`/loans/${l.id}`)} style={{ fontSize: '16px' }}>👁️</button>
+                  
+                  {l.status === 'pending' && (
+                    <>
+                      <button 
+                        onClick={() => handleApprove(l.id)}
+                        style={{ background: '#DCFCE7', color: '#166534', border: '1px solid #22C55E', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}
+                      >
+                        ✓ Accept
+                      </button>
+                      <button 
+                        onClick={() => handleReject(l.id)}
+                        style={{ background: '#FEE2E2', color: '#991B1B', border: '1px solid #EF4444', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}
+                      >
+                        ✕ Reject
+                      </button>
+                    </>
+                  )}
                 </td>
+
               </tr>
             )) : (
               <tr><td colSpan="8" style={{textAlign: 'center', padding: '20px'}}>No loans match your filters.</td></tr>

@@ -1,74 +1,153 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchLoans } from '../data/mockData';
+import { fetchLoans, fetchUsers } from '../data/mockData';
 
 const LoanDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loan, setLoan] = useState(null);
+  const [borrower, setBorrower] = useState(null);
 
   useEffect(() => {
     fetchLoans().then(allLoans => {
-      const foundLoan = allLoans.find(l => l.id === id);
+      const foundLoan = allLoans.find(l => l.id === id) || allLoans[0];
       setLoan(foundLoan);
+      
+      // Fetch the associated user data for the borrower profile
+      fetchUsers().then(allUsers => {
+        const foundUser = allUsers.find(u => u.name === foundLoan.retailer) || allUsers[0];
+        setBorrower(foundUser);
+      });
     });
   }, [id]);
 
-  if (!loan) return <div className="page-content">Loading loan details...</div>;
+  const handleApprove = () => {
+    alert(`Loan ${loan.id} has been Approved.`);
+    navigate('/loans');
+  };
+
+  const handleReject = () => {
+    alert(`Loan ${loan.id} has been Rejected.`);
+    navigate('/loans');
+  };
+
+  if (!loan || !borrower) return <div className="page-content">Loading...</div>;
 
   return (
     <>
-      <div className="page-header" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <button onClick={() => navigate(-1)} className="btn-outline">← Back</button>
-        <div>
-          <h1>Loan {loan.id}</h1>
-          <p>Borrower: <span className="fw-500">{loan.retailer}</span> | Status: <span className={`status-badge ${loan.status}`}>{loan.status}</span></p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <button onClick={() => navigate(-1)} className="btn-outline">← Back</button>
+          <div>
+            <h1>Loan Application: {loan.id}</h1>
+            <p>Submitted on: {loan.date} | Status: <span className={`status-badge ${loan.status}`}>{loan.status}</span></p>
+          </div>
         </div>
+
+        {/* TOP LEVEL ACTION BUTTONS FOR PENDING LOANS */}
+        {loan.status === 'pending' && (
+          <div style={{ display: 'flex', gap: '15px' }}>
+            <button onClick={handleReject} className="btn-outline" style={{ color: '#DC2626', borderColor: '#FCA5A5' }}>
+              Reject Application
+            </button>
+            <button onClick={handleApprove} style={{ background: '#0A3D91', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              Approve Loan
+            </button>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px', marginTop: '20px' }}>
         
-        {/* Loan Specs Card */}
-        <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', height: 'fit-content' }}>
-          <h3>Current Loan Specs</h3>
-          <hr style={{ margin: '15px 0', borderColor: '#E2E8F0' }} />
-          <p><strong>Approved Amount:</strong> <span className="fw-500 color-green">{loan.approved}</span></p>
-          <p style={{ marginTop: '10px' }}><strong>Duration:</strong> {loan.duration}</p>
-          <p style={{ marginTop: '10px' }}>
-            <strong>Risk Assessment:</strong> <br/>
-            <span className={`risk-badge ${loan.riskLabel.includes('High') ? 'risk-high' : 'risk-low'}`} style={{ display: 'inline-block', marginTop: '5px' }}>
-              Score: {loan.risk} - {loan.riskLabel}
-            </span>
-          </p>
+        {/* LEFT COLUMN: Borrower & Risk */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* ML Risk Prediction Card */}
+          <div className="chart-card" style={{ background: '#1E293B', color: 'white', padding: '25px', borderRadius: '12px', border: 'none' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <h3 style={{ margin: 0, color: 'white' }}>Risk Analysis</h3>
+              <span style={{ background: '#3B82F6', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px' }}>PREDICTED BY ML</span>
+            </div>
+            <hr style={{ margin: '15px 0', borderColor: '#334155' }} />
+            <div style={{ textAlign: 'center', margin: '20px 0' }}>
+              <div style={{ fontSize: '48px', fontWeight: 'bold', color: loan.riskLabel.includes('High') ? '#F87171' : loan.riskLabel.includes('Medium') ? '#FBBF24' : '#4ADE80' }}>
+                {loan.risk}
+              </div>
+              <p style={{ margin: 0, color: '#94A3B8', fontSize: '14px' }}>{loan.riskLabel}</p>
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '13px', color: '#CBD5E1', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <li>✓ Credit history checked</li>
+              <li>✓ Platform order volume steady</li>
+              <li>{loan.history.length > 0 ? '✓ Past repayment history found' : '⚠️ No past repayment history'}</li>
+            </ul>
+          </div>
+
+          {/* Borrower Profile */}
+          <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <h3 style={{ marginBottom: '15px' }}>Borrower Profile</h3>
+            <p style={{ marginBottom: '8px' }}><strong>Name:</strong> {borrower.name}</p>
+            <p style={{ marginBottom: '8px' }}><strong>Business:</strong> {borrower.businessName}</p>
+            <p style={{ marginBottom: '8px' }}><strong>KYC:</strong> <span className="color-green fw-500">{borrower.kycStatus}</span></p>
+            <button onClick={() => navigate(`/users/${borrower.id}`)} className="btn-outline" style={{ width: '100%', marginTop: '10px', fontSize: '13px' }}>
+              View Full User Profile
+            </button>
+          </div>
         </div>
 
-        {/* Previous Loan History Table */}
-        <div className="table-container">
-          <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Previous Loan History</h3>
-          <table className="data-table">
-            <thead>
-              <tr><th>Past Loan ID</th><th>Amount</th><th>Repaid On</th><th>Late Delays</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              {loan.history && loan.history.length > 0 ? (
-                loan.history.map((hist, idx) => (
-                  <tr key={idx}>
-                    <td className="fw-500">{hist.pastId}</td>
-                    <td className="fw-500 color-blue">{hist.amount}</td>
-                    <td>{hist.repaidOn}</td>
-                    <td style={{ color: hist.delays > 0 ? '#E11D48' : '#166534', fontWeight: 'bold' }}>
-                      {hist.delays} times
-                    </td>
-                    <td><span className={`status-badge ${hist.status}`}>{hist.status}</span></td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No previous loan history found.</td></tr>
-              )}
-            </tbody>
-          </table>
+        {/* RIGHT COLUMN: Loan Details & History */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Loan Details */}
+          <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+            <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Requested Amount</p><p className="fw-500 color-blue" style={{ fontSize: '18px', margin: 0 }}>{loan.requested}</p></div>
+            <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Approved Amount</p><p className="fw-500 color-green" style={{ fontSize: '18px', margin: 0 }}>{loan.approved === '-' ? 'Pending Approval' : loan.approved}</p></div>
+            <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Duration</p><p className="fw-500" style={{ margin: 0 }}>{loan.duration}</p></div>
+          </div>
+
+          {/* Past History Table */}
+          <div className="table-container">
+            <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Previous Loan History</h3>
+            <table className="data-table">
+              <thead><tr><th>Past Loan ID</th><th>Amount</th><th>Repaid On</th><th>Late Delays</th><th>Status</th></tr></thead>
+              <tbody>
+                {loan.history && loan.history.length > 0 ? (
+                  loan.history.map((hist, idx) => (
+                    <tr key={idx}>
+                      <td className="fw-500">{hist.pastId}</td>
+                      <td className="fw-500 color-blue">{hist.amount}</td>
+                      <td>{hist.repaidOn}</td>
+                      <td style={{ color: hist.delays > 0 ? '#E11D48' : '#166534', fontWeight: 'bold' }}>{hist.delays} times</td>
+                      <td><span className={`status-badge ${hist.status}`}>{hist.status}</span></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No previous loan history found.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Active EMI Schedule */}
+          {loan.emis && loan.emis.length > 0 && (
+            <div className="table-container">
+              <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Current EMI Schedule</h3>
+              <table className="data-table">
+                <thead><tr><th>Installment</th><th>Due Date</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  {loan.emis.map((emi, idx) => (
+                    <tr key={idx}>
+                      <td className="fw-500">{emi.inst}</td>
+                      <td>{emi.dueDate}</td>
+                      <td className="fw-500">{emi.amount}</td>
+                      <td><span className={`badge-outline`} style={{ borderColor: emi.status === 'pending' ? '#F59E0B' : '#E2E8F0', color: emi.status === 'pending' ? '#D97706' : '#64748B' }}>{emi.status.toUpperCase()}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
         </div>
-        
       </div>
     </>
   );
