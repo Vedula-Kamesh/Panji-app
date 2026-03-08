@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { fetchOrders } from '../data/mockData';
+import { fetchOrders } from '../data/mockdata';
 import { downloadCSV } from '../utils/exportUtils';
 
 const Orders = () => {
