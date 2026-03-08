@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { fetchUsers } from '../data/mockdata';
+import { fetchUsers } from '../data/mockData';
 import { downloadCSV } from '../utils/exportUtils';
 
 const Users = () => {

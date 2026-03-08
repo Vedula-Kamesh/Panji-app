@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { fetchFinance } from '../data/mockdata';
+import { fetchFinance } from '../data/mockData';
 
 const Finance = () => {
   const [txns, setTxns] = useState([]);

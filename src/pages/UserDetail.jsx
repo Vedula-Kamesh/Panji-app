@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchUsers } from '../data/mockdata';
+import { fetchUsers } from '../data/mockData';
 
 const UserDetail = () => {
   const { id } = useParams(); 

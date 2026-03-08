@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchRisk } from '../data/mockdata';
+import { fetchRisk } from '../data/mockData';
 
 const Risk = () => {
   const [risks, setRisks] = useState([]);
