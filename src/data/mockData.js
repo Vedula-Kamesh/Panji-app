@@ -2,25 +2,33 @@
 
 export const fetchDashboardMetrics = () => {
   return Promise.resolve([
+    // ROW 1
     { title: "Total Revenue", value: "₹95.2L", trend: "+12.5%", isUp: true, iconBg: "#DCFCE7", iconColor: "#166534", icon: "$" },
     { title: "Orders Today", value: "268", trend: "+8.3%", isUp: true, iconBg: "#DBEAFE", iconColor: "#1D4ED8", icon: "🛒" },
     { title: "Active Loans", value: "145", trend: "+5.2%", isUp: true, iconBg: "#F3E8FF", iconColor: "#7E22CE", icon: "💳" },
     { title: "Default Rate", value: "2.1%", trend: "-0.5%", isUp: false, iconBg: "#FEE2E2", iconColor: "#991B1B", icon: "📉" },
+    
+    // ROW 2
     { title: "Active Users", value: "1,245", trend: "+15.8%", isUp: true, iconBg: "#E0E7FF", iconColor: "#4338CA", icon: "👥" },
     { title: "Pending Orders", value: "32", trend: "-12.3%", isUp: false, iconBg: "#FFEDD5", iconColor: "#C2410C", icon: "⏱️" },
     { title: "Commission Earned", value: "₹4.8L", trend: "+18.2%", isUp: true, iconBg: "#CCFBF1", iconColor: "#0F766E", icon: "%" },
-    { title: "GST Collected", value: "₹12.5L", trend: "+14.7%", isUp: true, iconBg: "#E0F2FE", iconColor: "#0369A1", icon: "📄" }
+    { title: "GST Collected", value: "₹12.5L", trend: "+14.7%", isUp: true, iconBg: "#E0F2FE", iconColor: "#0369A1", icon: "📄" }, // Restored!
+    
+    // ROW 3
+    // NEW: Total Products metric card (green card from second image) automatically wraps to row 3
+    { title: "Total Products", value: "8,500+", trend: "+20.3%", isUp: true, isGreenCard: true, iconBg: "rgba(255,255,255,0.2)", iconColor: "#FFFFFF", icon: "📦" }
   ]);
 };
 
 export const fetchUsers = () => {
   return Promise.resolve([
-    { id: "U-1001", name: "Rajesh Kumar", businessName: "Rajesh Kirana Store", verified: true, kycStatus: "Approved", mobile: "+91 98765 43210", address: "Sector 14, Gurugram", orders: 45, loanLimit: "₹5.0L", rating: 4.8, status: "active" },
-    { id: "U-1002", name: "Priya Sharma", businessName: "Sharma Provisions", verified: true, kycStatus: "Approved", mobile: "+91 98765 43211", address: "Vasant Kunj, Delhi", orders: 32, loanLimit: "₹3.5L", rating: 4.5, status: "active" },
-    { id: "U-1003", name: "Amit Patel", businessName: "Patel Mart", verified: true, kycStatus: "Approved", mobile: "+91 98765 43212", address: "SG Highway, Ahmedabad", orders: 78, loanLimit: "₹8.0L", rating: 4.9, status: "active" },
-    { id: "U-1004", name: "Sneha Reddy", businessName: "Reddy General Store", verified: false, kycStatus: "Pending", mobile: "+91 98765 43213", address: "Banjara Hills, Hyderabad", orders: 12, loanLimit: "₹2.0L", rating: 3.8, status: "pending" },
-    { id: "U-1005", name: "Vikram Singh", businessName: "Singh Traders", verified: false, kycStatus: "Rejected", mobile: "+91 98765 43214", address: "Civil Lines, Jaipur", orders: 0, loanLimit: "₹0", rating: null, status: "suspended" },
-    { id: "U-1006", name: "Anita Gupta", businessName: "Gupta Supermarket", verified: true, kycStatus: "Approved", mobile: "+91 98765 43215", address: "Andheri West, Mumbai", orders: 56, loanLimit: "₹6.5L", rating: 4.7, status: "active" }
+    // Added 'type' field to distinguish between retailers (vendors) and wholesalers
+    { id: "U-1001", type: "retailer", name: "Rajesh Kumar", businessName: "Rajesh Kirana Store", verified: true, kycStatus: "Approved", mobile: "+91 98765 43210", address: "Sector 14, Gurugram", orders: 45, loanLimit: "₹5.0L", rating: 4.8, status: "active" },
+    { id: "U-1002", type: "retailer", name: "Priya Sharma", businessName: "Sharma Provisions", verified: true, kycStatus: "Approved", mobile: "+91 98765 43211", address: "Vasant Kunj, Delhi", orders: 32, loanLimit: "₹3.5L", rating: 4.5, status: "active" },
+    { id: "U-1003", type: "wholesaler", name: "Amit Patel", businessName: "Patel Mart", verified: true, kycStatus: "Approved", mobile: "+91 98765 43212", address: "SG Highway, Ahmedabad", orders: 78, loanLimit: "₹8.0L", rating: 4.9, status: "active" },
+    { id: "U-1004", type: "retailer", name: "Sneha Reddy", businessName: "Reddy General Store", verified: false, kycStatus: "Pending", mobile: "+91 98765 43213", address: "Banjara Hills, Hyderabad", orders: 12, loanLimit: "₹2.0L", rating: 3.8, status: "pending" },
+    { id: "U-1005", type: "wholesaler", name: "Vikram Singh", businessName: "Singh Traders", verified: false, kycStatus: "Rejected", mobile: "+91 98765 43214", address: "Civil Lines, Jaipur", orders: 0, loanLimit: "₹0", rating: null, status: "suspended" },
+    { id: "U-1006", type: "retailer", name: "Anita Gupta", businessName: "Gupta Supermarket", verified: true, kycStatus: "Approved", mobile: "+91 98765 43215", address: "Andheri West, Mumbai", orders: 56, loanLimit: "₹6.5L", rating: 4.7, status: "active" }
   ]);
 };
 
@@ -104,6 +112,11 @@ export const fetchLoans = () => {
   return Promise.resolve([
     { 
       id: "LN-2001", retailer: "Rajesh Kumar", requested: "₹2.5L", approved: "₹2.5L", duration: "12 months", risk: 85, riskLabel: "Low Risk", status: "active", date: "10 Feb 2026",
+      documents: [
+        { title: "Owner KYC (Aadhar)", file: "Rajesh_Aadhar.pdf" },
+        { title: "Business Proof (GST)", file: "Rajesh_GST_Cert.pdf" },
+        { title: "Bank Statement (Last 6 Months)", file: "Rajesh_Bank_Stmt.pdf" }
+      ],
       emis: [
         { inst: "1/12", dueDate: "10 Mar 2026", amount: "₹22,500", status: "pending" },
         { inst: "2/12", dueDate: "10 Apr 2026", amount: "₹22,500", status: "upcoming" }
@@ -115,6 +128,10 @@ export const fetchLoans = () => {
     },
     { 
       id: "LN-2002", retailer: "Priya Sharma", requested: "₹3.0L", approved: "₹2.8L", duration: "12 months", risk: 78, riskLabel: "Medium Risk", status: "active", date: "08 Feb 2026",
+      documents: [
+        { title: "Owner KYC (PAN)", file: "Priya_PAN.pdf" },
+        { title: "Business Registration", file: "Sharma_Prov_Reg.pdf" }
+      ],
       emis: [
         { inst: "1/12", dueDate: "08 Mar 2026", amount: "₹25,200", status: "pending" }
       ],
@@ -124,6 +141,10 @@ export const fetchLoans = () => {
     },
     { 
       id: "LN-2003", retailer: "Amit Patel", requested: "₹5.0L", approved: "-", duration: "18 months", risk: 45, riskLabel: "High Risk", status: "pending", date: "20 Feb 2026",
+      documents: [
+        { title: "Owner KYC (Aadhar)", file: "Amit_Aadhar.pdf" },
+        { title: "ITR (Last 2 Years)", file: "Amit_ITR_24_25.pdf" }
+      ],
       emis: [],
       history: [
         { pastId: "LN-0995", amount: "₹4.5L", repaidOn: "-", status: "defaulted", delays: 5 }
@@ -131,6 +152,7 @@ export const fetchLoans = () => {
     },
     { 
       id: "LN-2004", retailer: "Sneha Reddy", requested: "₹1.8L", approved: "₹1.8L", duration: "6 months", risk: 92, riskLabel: "Low Risk", status: "completed", date: "05 Jan 2026",
+      documents: [], // Example of a loan with no documents attached
       emis: [
         { inst: "6/6", dueDate: "05 Jul 2026", amount: "₹31,500", status: "completed" }
       ],
@@ -138,6 +160,9 @@ export const fetchLoans = () => {
     },
     { 
       id: "LN-2005", retailer: "Anita Gupta", requested: "₹4.0L", approved: "₹3.5L", duration: "24 months", risk: 72, riskLabel: "Medium Risk", status: "active", date: "15 Jan 2026",
+      documents: [
+        { title: "Business Proof (GST)", file: "Gupta_Supermarket_GST.pdf" }
+      ],
       emis: [
         { inst: "1/24", dueDate: "15 Feb 2026", amount: "₹16,000", status: "completed" },
         { inst: "2/24", dueDate: "15 Mar 2026", amount: "₹16,000", status: "pending" }
@@ -165,5 +190,17 @@ export const fetchRisk = () => {
     { id: "RISK-002", user: "Amit Patel", type: "Previous Defaulted Loan", level: "HIGH", amount: "₹5.0L" },
     { id: "RISK-003", user: "Meera Joshi", type: "Unusual Transaction Pattern", level: "MEDIUM", amount: "₹2.5L" },
     { id: "RISK-004", user: "Suresh Nair", type: "Duplicate Account Detection", level: "HIGH", amount: "₹0" }
+  ]);
+};
+
+// NEW: fetchRecentActivity for Dashboard Summary (bottom section of Dashboard)
+export const fetchRecentActivity = () => {
+  return Promise.resolve([
+    { date: "20 Feb 2026", time: "14:30 PM", action: "Exported Users (Active)", type: "user", user: "Rajesh Kumar", ip: "192.168.1.45" },
+    { date: "20 Feb 2026", time: "10:15 AM", action: "Approved Loan LN-2001", type: "loan", user: "Rajesh Kumar", ip: "192.168.1.45" },
+    { date: "19 Feb 2026", time: "09:00 AM", action: "Admin Login", type: "system", user: "Super Admin", ip: "192.168.1.45" },
+    { date: "19 Feb 2026", time: "16:45 PM", action: "Rejected Loan LN-2003", type: "loan", user: "Amit Patel", ip: "192.168.1.45" },
+    { date: "19 Feb 2026", time: "11:20 AM", action: "Updated KYC Sneha Reddy", type: "user", user: "Sneha Reddy", ip: "192.168.1.45" },
+    { date: "19 Feb 2026", time: "10:05 AM", action: "Exported Orders Today", type: "order", user: "Sneha Reddy", ip: "192.168.1.45" },
   ]);
 };

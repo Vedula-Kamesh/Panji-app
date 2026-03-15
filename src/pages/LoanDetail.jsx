@@ -13,7 +13,6 @@ const LoanDetail = () => {
       const foundLoan = allLoans.find(l => l.id === id) || allLoans[0];
       setLoan(foundLoan);
       
-      // Fetch the associated user data for the borrower profile
       fetchUsers().then(allUsers => {
         const foundUser = allUsers.find(u => u.name === foundLoan.retailer) || allUsers[0];
         setBorrower(foundUser);
@@ -31,6 +30,11 @@ const LoanDetail = () => {
     navigate('/loans');
   };
 
+  const handleDownloadDocument = (fileName) => {
+    // In a real app, this would hit your backend to generate a signed URL or trigger a Blob download
+    alert(`Initiating secure download for: ${fileName}`);
+  };
+
   if (!loan || !borrower) return <div className="page-content">Loading...</div>;
 
   return (
@@ -44,7 +48,6 @@ const LoanDetail = () => {
           </div>
         </div>
 
-        {/* TOP LEVEL ACTION BUTTONS FOR PENDING LOANS */}
         {loan.status === 'pending' && (
           <div style={{ display: 'flex', gap: '15px' }}>
             <button onClick={handleReject} className="btn-outline" style={{ color: '#DC2626', borderColor: '#FCA5A5' }}>
@@ -59,10 +62,9 @@ const LoanDetail = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px', marginTop: '20px' }}>
         
-        {/* LEFT COLUMN: Borrower & Risk */}
+        {/* LEFT COLUMN: Borrower, Risk, & Documents */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* ML Risk Prediction Card */}
           <div className="chart-card" style={{ background: '#1E293B', color: 'white', padding: '25px', borderRadius: '12px', border: 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <h3 style={{ margin: 0, color: 'white' }}>Risk Analysis</h3>
@@ -82,7 +84,6 @@ const LoanDetail = () => {
             </ul>
           </div>
 
-          {/* Borrower Profile */}
           <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
             <h3 style={{ marginBottom: '15px' }}>Borrower Profile</h3>
             <p style={{ marginBottom: '8px' }}><strong>Name:</strong> {borrower.name}</p>
@@ -92,19 +93,50 @@ const LoanDetail = () => {
               View Full User Profile
             </button>
           </div>
+
+          {/* NEW: Attached Documents Card */}
+          <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <h3 style={{ marginBottom: '15px' }}>Attached Proofs</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {loan.documents && loan.documents.length > 0 ? (
+                loan.documents.map((doc, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', background: '#F8FAFC' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '20px' }}>📄</span>
+                      <div>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 'bold', color: '#1E293B' }}>{doc.title}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#64748B', marginTop: '2px' }}>{doc.file}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleDownloadDocument(doc.file)} 
+                      style={{ background: 'white', border: '1px solid #CBD5E1', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', color: '#0A3D91', fontWeight: 'bold', fontSize: '12px', transition: 'background 0.2s' }}
+                      onMouseEnter={(e) => e.target.style.background = '#F1F5F9'}
+                      onMouseLeave={(e) => e.target.style.background = 'white'}
+                    >
+                      ⬇️ Save
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p style={{ fontSize: '13px', color: '#64748B', margin: 0, padding: '10px', textAlign: 'center', background: '#F8FAFC', borderRadius: '8px', border: '1px dashed #CBD5E1' }}>
+                  No documents attached to this application.
+                </p>
+              )}
+            </div>
+          </div>
+
         </div>
 
         {/* RIGHT COLUMN: Loan Details & History */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* Loan Details */}
           <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
             <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Requested Amount</p><p className="fw-500 color-blue" style={{ fontSize: '18px', margin: 0 }}>{loan.requested}</p></div>
             <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Approved Amount</p><p className="fw-500 color-green" style={{ fontSize: '18px', margin: 0 }}>{loan.approved === '-' ? 'Pending Approval' : loan.approved}</p></div>
             <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Duration</p><p className="fw-500" style={{ margin: 0 }}>{loan.duration}</p></div>
           </div>
 
-          {/* Past History Table */}
           <div className="table-container">
             <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Previous Loan History</h3>
             <table className="data-table">
@@ -127,7 +159,6 @@ const LoanDetail = () => {
             </table>
           </div>
 
-          {/* Active EMI Schedule */}
           {loan.emis && loan.emis.length > 0 && (
             <div className="table-container">
               <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Current EMI Schedule</h3>
