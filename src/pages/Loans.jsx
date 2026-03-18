@@ -17,7 +17,6 @@ const Loans = () => {
 
   useEffect(() => {
     if (location.state?.status) {
-      // Small adjustment: The pie chart uses "Defaulted", our dropdown uses "Rejected"
       const incomingStatus = location.state.status === "Defaulted" ? "Rejected" : location.state.status;
       setStatusFilter(incomingStatus);
     }
@@ -29,10 +28,17 @@ const Loans = () => {
   const handleReject = (id) => { if (window.confirm(`Reject loan ${id}?`)) alert(`Rejected.`); };
 
   const filteredData = loans.filter(loan => {
-    const globalMatch = loan.retailer.toLowerCase().includes(globalSearch.toLowerCase()) || loan.id.toLowerCase().includes(globalSearch.toLowerCase());
-    const localMatch = loan.retailer.toLowerCase().includes(localSearch.toLowerCase()) || loan.id.toLowerCase().includes(localSearch.toLowerCase());
+    const globalMatch = loan.retailer.toLowerCase().includes(globalSearch.toLowerCase()) || 
+                        loan.id.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                        (loan.orderId && loan.orderId.toLowerCase().includes(globalSearch.toLowerCase()));
+    
+    const localMatch = loan.retailer.toLowerCase().includes(localSearch.toLowerCase()) || 
+                       loan.id.toLowerCase().includes(localSearch.toLowerCase()) ||
+                       (loan.orderId && loan.orderId.toLowerCase().includes(localSearch.toLowerCase()));
+                       
     const statusMatch = statusFilter === 'All Status' || loan.status.toLowerCase() === statusFilter.toLowerCase();
     const riskMatch = riskFilter === 'All Risk Levels' || loan.riskLabel.includes(riskFilter.replace(' Risk', ''));
+    
     return globalMatch && localMatch && statusMatch && riskMatch;
   });
 
@@ -46,7 +52,7 @@ const Loans = () => {
       <div className="table-controls">
         <input 
           type="text" 
-          placeholder="Search loans..." 
+          placeholder="Search loans or orders..." 
           className="search-input" 
           value={localSearch} 
           onChange={e => setLocalSearch(e.target.value)} 
@@ -65,18 +71,44 @@ const Loans = () => {
       <div className="table-container">
         <table className="data-table">
           <thead>
-            <tr><th>Loan ID</th><th>Retailer</th><th>Requested</th><th>Approved</th><th>Duration</th><th>Risk Score</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+              <th>Loan ID</th>
+              <th>Linked Order</th>
+              <th>Retailer</th>
+              <th>Requested</th>
+              <th>Approved</th>
+              <th>Duration</th>
+              <th>Risk Score</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody>
             {filteredData.length > 0 ? filteredData.map(l => (
               <tr key={l.id}>
-                <td className="fw-500">{l.id}</td><td><div className="user-name">{l.retailer}</div></td>
-                <td className="fw-500 color-blue">{l.requested}</td><td className="fw-500 color-green">{l.approved}</td>
+                <td className="fw-500">{l.id}</td>
+                <td className="fw-500 color-blue">{l.orderId || '-'}</td>
+                <td><div className="user-name">{l.retailer}</div></td>
+                <td className="fw-500 color-blue">{l.requested}</td>
+                <td className="fw-500 color-green">{l.approved}</td>
                 <td>{l.duration}</td>
                 <td><span className={`risk-badge ${l.riskLabel.includes('High') ? 'risk-high' : l.riskLabel.includes('Medium') ? 'risk-medium' : 'risk-low'}`}>{l.risk} {l.riskLabel}</span></td>
                 <td><span className={`status-badge ${l.status}`}>{l.status}</span></td>
+                
                 <td className="table-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <button title="View Details" onClick={() => navigate(`/loans/${l.id}`)} style={{ fontSize: '16px' }}>👁️</button>
+                  <button title="View Loan Details" onClick={() => navigate(`/loans/${l.id}`)} style={{ fontSize: '16px' }}>👁️</button>
+                  
+                  {/* NEW: View Order Button */}
+                  {l.orderId && (
+                    <button 
+                      title="View Linked Order" 
+                      onClick={() => navigate(`/orders/${l.orderId}`)} 
+                      style={{ fontSize: '16px' }}
+                    >
+                      📦
+                    </button>
+                  )}
+
                   {l.status === 'pending' && (
                     <>
                       <button onClick={() => handleApprove(l.id)} style={{ background: '#DCFCE7', color: '#166534', border: '1px solid #22C55E', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>✓ Accept</button>
@@ -85,11 +117,12 @@ const Loans = () => {
                   )}
                 </td>
               </tr>
-            )) : <tr><td colSpan="8" style={{textAlign: 'center', padding: '20px'}}>No loans match your filters.</td></tr>}
+            )) : <tr><td colSpan="9" style={{textAlign: 'center', padding: '20px'}}>No loans match your filters.</td></tr>}
           </tbody>
         </table>
       </div>
     </>
   );
 };
+
 export default Loans;

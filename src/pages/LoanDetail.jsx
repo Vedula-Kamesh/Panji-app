@@ -31,7 +31,6 @@ const LoanDetail = () => {
   };
 
   const handleDownloadDocument = (fileName) => {
-    // In a real app, this would hit your backend to generate a signed URL or trigger a Blob download
     alert(`Initiating secure download for: ${fileName}`);
   };
 
@@ -62,7 +61,7 @@ const LoanDetail = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px', marginTop: '20px' }}>
         
-        {/* LEFT COLUMN: Borrower, Risk, & Documents */}
+        {/* LEFT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div className="chart-card" style={{ background: '#1E293B', color: 'white', padding: '25px', borderRadius: '12px', border: 'none' }}>
@@ -94,7 +93,6 @@ const LoanDetail = () => {
             </button>
           </div>
 
-          {/* NEW: Attached Documents Card */}
           <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
             <h3 style={{ marginBottom: '15px' }}>Attached Proofs</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -110,9 +108,7 @@ const LoanDetail = () => {
                     </div>
                     <button 
                       onClick={() => handleDownloadDocument(doc.file)} 
-                      style={{ background: 'white', border: '1px solid #CBD5E1', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', color: '#0A3D91', fontWeight: 'bold', fontSize: '12px', transition: 'background 0.2s' }}
-                      onMouseEnter={(e) => e.target.style.background = '#F1F5F9'}
-                      onMouseLeave={(e) => e.target.style.background = 'white'}
+                      style={{ background: 'white', border: '1px solid #CBD5E1', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', color: '#0A3D91', fontWeight: 'bold', fontSize: '12px' }}
                     >
                       ⬇️ Save
                     </button>
@@ -120,7 +116,7 @@ const LoanDetail = () => {
                 ))
               ) : (
                 <p style={{ fontSize: '13px', color: '#64748B', margin: 0, padding: '10px', textAlign: 'center', background: '#F8FAFC', borderRadius: '8px', border: '1px dashed #CBD5E1' }}>
-                  No documents attached to this application.
+                  No documents attached.
                 </p>
               )}
             </div>
@@ -128,7 +124,7 @@ const LoanDetail = () => {
 
         </div>
 
-        {/* RIGHT COLUMN: Loan Details & History */}
+        {/* RIGHT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
@@ -139,42 +135,70 @@ const LoanDetail = () => {
 
           <div className="table-container">
             <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Previous Loan History</h3>
-            <table className="data-table">
-              <thead><tr><th>Past Loan ID</th><th>Amount</th><th>Repaid On</th><th>Late Delays</th><th>Status</th></tr></thead>
-              <tbody>
-                {loan.history && loan.history.length > 0 ? (
-                  loan.history.map((hist, idx) => (
-                    <tr key={idx}>
-                      <td className="fw-500">{hist.pastId}</td>
-                      <td className="fw-500 color-blue">{hist.amount}</td>
-                      <td>{hist.repaidOn}</td>
-                      <td style={{ color: hist.delays > 0 ? '#E11D48' : '#166534', fontWeight: 'bold' }}>{hist.delays} times</td>
-                      <td><span className={`status-badge ${hist.status}`}>{hist.status}</span></td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No previous loan history found.</td></tr>
-                )}
-              </tbody>
-            </table>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="data-table">
+                <thead><tr><th>Past Loan ID</th><th>Linked Order</th><th>Amount</th><th>Repaid On</th><th>Late Delays</th><th>Status</th></tr></thead>
+                <tbody>
+                  {loan.history && loan.history.length > 0 ? (
+                    loan.history.map((hist, idx) => (
+                      <tr key={idx}>
+                        <td className="fw-500">{hist.pastId}</td>
+                        {/* New clickable Linked Order column */}
+                        <td>
+                          <button 
+                            onClick={() => navigate(`/orders/${hist.orderId}`)} 
+                            style={{ background: '#E0F2FE', color: '#0369A1', border: '1px solid #BAE6FD', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                          >
+                            {hist.orderId}
+                          </button>
+                        </td>
+                        <td className="fw-500 color-blue">{hist.amount}</td>
+                        <td>{hist.repaidOn}</td>
+                        <td style={{ color: hist.delays > 0 ? '#E11D48' : '#166534', fontWeight: 'bold' }}>{hist.delays} times</td>
+                        <td><span className={`status-badge ${hist.status}`}>{hist.status}</span></td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>No previous loan history found.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {loan.emis && loan.emis.length > 0 && (
             <div className="table-container">
               <h3 style={{ padding: '20px', borderBottom: '1px solid #E2E8F0', background: 'white', margin: 0 }}>Current EMI Schedule</h3>
-              <table className="data-table">
-                <thead><tr><th>Installment</th><th>Due Date</th><th>Amount</th><th>Status</th></tr></thead>
-                <tbody>
-                  {loan.emis.map((emi, idx) => (
-                    <tr key={idx}>
-                      <td className="fw-500">{emi.inst}</td>
-                      <td>{emi.dueDate}</td>
-                      <td className="fw-500">{emi.amount}</td>
-                      <td><span className={`badge-outline`} style={{ borderColor: emi.status === 'pending' ? '#F59E0B' : '#E2E8F0', color: emi.status === 'pending' ? '#D97706' : '#64748B' }}>{emi.status.toUpperCase()}</span></td>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Installment</th>
+                      <th>Due Date</th>
+                      <th>EMI Amount</th>
+                      <th>Outstanding</th>
+                      <th>Overdue</th>
+                      <th>Payment Details</th>
+                      <th>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {loan.emis.map((emi, idx) => (
+                      <tr key={idx}>
+                        <td className="fw-500">{emi.inst}</td>
+                        <td>{emi.dueDate}</td>
+                        <td className="fw-500">{emi.amount}</td>
+                        <td className="fw-500 color-orange">{emi.outstanding}</td>
+                        <td style={{ color: emi.overdue > 0 ? '#DC2626' : '#64748B', fontWeight: emi.overdue > 0 ? 'bold' : 'normal' }}>
+                          {emi.overdue} payments
+                        </td>
+                        <td style={{ fontSize: '13px', color: '#475569' }}>{emi.paymentDetails}</td>
+                        <td><span className={`badge-outline`} style={{ borderColor: emi.status === 'pending' ? '#F59E0B' : '#E2E8F0', color: emi.status === 'pending' ? '#D97706' : '#64748B' }}>{emi.status.toUpperCase()}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 

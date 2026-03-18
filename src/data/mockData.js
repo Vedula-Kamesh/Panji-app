@@ -12,23 +12,22 @@ export const fetchDashboardMetrics = () => {
     { title: "Active Users", value: "1,245", trend: "+15.8%", isUp: true, iconBg: "#E0E7FF", iconColor: "#4338CA", icon: "👥" },
     { title: "Pending Orders", value: "32", trend: "-12.3%", isUp: false, iconBg: "#FFEDD5", iconColor: "#C2410C", icon: "⏱️" },
     { title: "Commission Earned", value: "₹4.8L", trend: "+18.2%", isUp: true, iconBg: "#CCFBF1", iconColor: "#0F766E", icon: "%" },
-    { title: "GST Collected", value: "₹12.5L", trend: "+14.7%", isUp: true, iconBg: "#E0F2FE", iconColor: "#0369A1", icon: "📄" }, // Restored!
+    { title: "GST Collected", value: "₹12.5L", trend: "+14.7%", isUp: true, iconBg: "#E0F2FE", iconColor: "#0369A1", icon: "📄" },
     
     // ROW 3
-    // NEW: Total Products metric card (green card from second image) automatically wraps to row 3
-    { title: "Total Products", value: "8,500+", trend: "+20.3%", isUp: true, isGreenCard: true, iconBg: "rgba(255,255,255,0.2)", iconColor: "#FFFFFF", icon: "📦" }
+    // Removed isGreenCard and applied standard warning colors (yellow/orange) to the icon
+    { title: "Total Products", value: "8,500+", trend: "+20.3%", isUp: true, iconBg: "#FEF3C7", iconColor: "#D97706", icon: "📦" }
   ]);
 };
 
 export const fetchUsers = () => {
   return Promise.resolve([
-    // Added 'type' field to distinguish between retailers (vendors) and wholesalers
-    { id: "U-1001", type: "retailer", name: "Rajesh Kumar", businessName: "Rajesh Kirana Store", verified: true, kycStatus: "Approved", mobile: "+91 98765 43210", address: "Sector 14, Gurugram", orders: 45, loanLimit: "₹5.0L", rating: 4.8, status: "active" },
-    { id: "U-1002", type: "retailer", name: "Priya Sharma", businessName: "Sharma Provisions", verified: true, kycStatus: "Approved", mobile: "+91 98765 43211", address: "Vasant Kunj, Delhi", orders: 32, loanLimit: "₹3.5L", rating: 4.5, status: "active" },
-    { id: "U-1003", type: "wholesaler", name: "Amit Patel", businessName: "Patel Mart", verified: true, kycStatus: "Approved", mobile: "+91 98765 43212", address: "SG Highway, Ahmedabad", orders: 78, loanLimit: "₹8.0L", rating: 4.9, status: "active" },
-    { id: "U-1004", type: "retailer", name: "Sneha Reddy", businessName: "Reddy General Store", verified: false, kycStatus: "Pending", mobile: "+91 98765 43213", address: "Banjara Hills, Hyderabad", orders: 12, loanLimit: "₹2.0L", rating: 3.8, status: "pending" },
-    { id: "U-1005", type: "wholesaler", name: "Vikram Singh", businessName: "Singh Traders", verified: false, kycStatus: "Rejected", mobile: "+91 98765 43214", address: "Civil Lines, Jaipur", orders: 0, loanLimit: "₹0", rating: null, status: "suspended" },
-    { id: "U-1006", type: "retailer", name: "Anita Gupta", businessName: "Gupta Supermarket", verified: true, kycStatus: "Approved", mobile: "+91 98765 43215", address: "Andheri West, Mumbai", orders: 56, loanLimit: "₹6.5L", rating: 4.7, status: "active" }
+    { id: "U-1001", type: "retailer", name: "Rajesh Kumar", businessName: "Rajesh Kirana Store", verified: true, kycStatus: "Approved", mobile: "+91 98765 43210", address: "Sector 14, Gurugram", orders: 45, existingLoan: "₹2.5L", rating: 4.8, status: "active" },
+    { id: "U-1002", type: "retailer", name: "Priya Sharma", businessName: "Sharma Provisions", verified: true, kycStatus: "Approved", mobile: "+91 98765 43211", address: "Vasant Kunj, Delhi", orders: 32, existingLoan: "₹2.8L", rating: 4.5, status: "active" },
+    { id: "U-1003", type: "wholesaler", name: "Amit Patel", businessName: "Patel Mart", verified: true, kycStatus: "Approved", mobile: "+91 98765 43212", address: "SG Highway, Ahmedabad", orders: 78, existingLoan: "₹4.5L", rating: 4.9, status: "active" },
+    { id: "U-1004", type: "retailer", name: "Sneha Reddy", businessName: "Reddy General Store", verified: false, kycStatus: "Pending", mobile: "+91 98765 43213", address: "Banjara Hills, Hyderabad", orders: 12, existingLoan: "₹0", rating: 3.8, status: "pending" },
+    { id: "U-1005", type: "wholesaler", name: "Vikram Singh", businessName: "Singh Traders", verified: false, kycStatus: "Rejected", mobile: "+91 98765 43214", address: "Civil Lines, Jaipur", orders: 0, existingLoan: "₹0", rating: null, status: "suspended" },
+    { id: "U-1006", type: "retailer", name: "Anita Gupta", businessName: "Gupta Supermarket", verified: true, kycStatus: "Approved", mobile: "+91 98765 43215", address: "Andheri West, Mumbai", orders: 56, existingLoan: "₹3.5L", rating: 4.7, status: "active" }
   ]);
 };
 
@@ -37,6 +36,7 @@ export const fetchOrders = () => {
     { 
       id: "ORD-12456", retailer: "Rajesh Kumar", wholesaler: "ABC Distributors", amount: "₹45,000", paymentType: "Loan + UPI", loanUsed: "₹30,000", status: "completed", date: "20 Feb 2026",
       paymentProof: "receipt_UPI_12456.jpg",
+      retailerConfirmation: { status: "Confirmed", date: "22 Feb, 03:15 PM", method: "OTP Verified (8842)" },
       items: [
         { name: "Basmati Rice Premium (25kg)", qty: 5, price: "₹12,500" },
         { name: "Aashirvaad Atta (10kg)", qty: 50, price: "₹22,500" },
@@ -52,6 +52,7 @@ export const fetchOrders = () => {
     { 
       id: "ORD-12455", retailer: "Priya Sharma", wholesaler: "XYZ Supplies", amount: "₹32,000", paymentType: "UPI", loanUsed: "-", status: "pending", date: "20 Feb 2026",
       paymentProof: "receipt_UPI_12455.pdf",
+      retailerConfirmation: { status: "Pending", date: "-", method: "-" },
       items: [
         { name: "Detergent Powder (5kg)", qty: 20, price: "₹18,000" },
         { name: "Dishwash Bar (Pack of 12)", qty: 10, price: "₹14,000" }
@@ -66,6 +67,7 @@ export const fetchOrders = () => {
     { 
       id: "ORD-12454", retailer: "Amit Patel", wholesaler: "Global Traders", amount: "₹78,000", paymentType: "Loan", loanUsed: "₹78,000", status: "processing", date: "19 Feb 2026",
       paymentProof: null,
+      retailerConfirmation: { status: "Pending", date: "-", method: "-" },
       items: [
         { name: "Mixed Dal Value Pack (100kg)", qty: 1, price: "₹45,000" },
         { name: "Sugar Premium (50kg)", qty: 10, price: "₹33,000" }
@@ -80,6 +82,7 @@ export const fetchOrders = () => {
     { 
       id: "ORD-12453", retailer: "Sneha Reddy", wholesaler: "ABC Distributors", amount: "₹25,000", paymentType: "Bank Transfer", loanUsed: "-", status: "completed", date: "19 Feb 2026",
       paymentProof: "bank_ref_5543.pdf",
+      retailerConfirmation: { status: "Confirmed", date: "21 Feb, 01:45 PM", method: "Digital Signature" },
       items: [
         { name: "Turmeric Powder (1kg)", qty: 25, price: "₹5,000" },
         { name: "Red Chilli Powder (1kg)", qty: 20, price: "₹6,000" },
@@ -95,6 +98,7 @@ export const fetchOrders = () => {
     { 
       id: "ORD-12452", retailer: "Vikram Singh", wholesaler: "Metro Wholesale", amount: "₹54,000", paymentType: "Loan + UPI", loanUsed: "₹40,000", status: "failed", date: "18 Feb 2026",
       paymentProof: null,
+      retailerConfirmation: { status: "Cancelled", date: "-", method: "-" },
       items: [
         { name: "Assorted Biscuits Combo", qty: 50, price: "₹24,000" },
         { name: "Tea Powder Premium (5kg)", qty: 15, price: "₹30,000" }
@@ -111,64 +115,64 @@ export const fetchOrders = () => {
 export const fetchLoans = () => {
   return Promise.resolve([
     { 
-      id: "LN-2001", retailer: "Rajesh Kumar", requested: "₹2.5L", approved: "₹2.5L", duration: "12 months", risk: 85, riskLabel: "Low Risk", status: "active", date: "10 Feb 2026",
+      id: "LN-2001", orderId: "ORD-12456", retailer: "Rajesh Kumar", requested: "₹2.5L", approved: "₹2.5L", duration: "12 months", risk: 85, riskLabel: "Low Risk", status: "active", date: "10 Feb 2026",
       documents: [
         { title: "Owner KYC (Aadhar)", file: "Rajesh_Aadhar.pdf" },
         { title: "Business Proof (GST)", file: "Rajesh_GST_Cert.pdf" },
         { title: "Bank Statement (Last 6 Months)", file: "Rajesh_Bank_Stmt.pdf" }
       ],
       emis: [
-        { inst: "1/12", dueDate: "10 Mar 2026", amount: "₹22,500", status: "pending" },
-        { inst: "2/12", dueDate: "10 Apr 2026", amount: "₹22,500", status: "upcoming" }
+        { inst: "1/12", dueDate: "10 Mar 2026", amount: "₹22,500", outstanding: "₹2,27,500", overdue: "0", paymentDetails: "Pending Auto-Debit", status: "pending" },
+        { inst: "2/12", dueDate: "10 Apr 2026", amount: "₹22,500", outstanding: "₹2,05,000", overdue: "0", paymentDetails: "-", status: "upcoming" }
       ],
       history: [
-        { pastId: "LN-1050", amount: "₹1.0L", repaidOn: "05 Jan 2026", status: "completed", delays: 0 },
-        { pastId: "LN-0820", amount: "₹50,000", repaidOn: "12 Oct 2025", status: "completed", delays: 0 }
+        { pastId: "LN-1050", orderId: "ORD-09821", amount: "₹1.0L", repaidOn: "05 Jan 2026", status: "completed", delays: 0 },
+        { pastId: "LN-0820", orderId: "ORD-08112", amount: "₹50,000", repaidOn: "12 Oct 2025", status: "completed", delays: 0 }
       ]
     },
     { 
-      id: "LN-2002", retailer: "Priya Sharma", requested: "₹3.0L", approved: "₹2.8L", duration: "12 months", risk: 78, riskLabel: "Medium Risk", status: "active", date: "08 Feb 2026",
+      id: "LN-2002", orderId: "ORD-12455", retailer: "Priya Sharma", requested: "₹3.0L", approved: "₹2.8L", duration: "12 months", risk: 78, riskLabel: "Medium Risk", status: "active", date: "08 Feb 2026",
       documents: [
         { title: "Owner KYC (PAN)", file: "Priya_PAN.pdf" },
         { title: "Business Registration", file: "Sharma_Prov_Reg.pdf" }
       ],
       emis: [
-        { inst: "1/12", dueDate: "08 Mar 2026", amount: "₹25,200", status: "pending" }
+        { inst: "1/12", dueDate: "08 Mar 2026", amount: "₹25,200", outstanding: "₹2,54,800", overdue: "0", paymentDetails: "-", status: "pending" }
       ],
       history: [
-        { pastId: "LN-1102", amount: "₹2.0L", repaidOn: "10 Nov 2025", status: "completed", delays: 2 }
+        { pastId: "LN-1102", orderId: "ORD-10550", amount: "₹2.0L", repaidOn: "10 Nov 2025", status: "completed", delays: 2 }
       ]
     },
     { 
-      id: "LN-2003", retailer: "Amit Patel", requested: "₹5.0L", approved: "-", duration: "18 months", risk: 45, riskLabel: "High Risk", status: "pending", date: "20 Feb 2026",
+      id: "LN-2003", orderId: "ORD-12454", retailer: "Amit Patel", requested: "₹5.0L", approved: "-", duration: "18 months", risk: 45, riskLabel: "High Risk", status: "pending", date: "20 Feb 2026",
       documents: [
         { title: "Owner KYC (Aadhar)", file: "Amit_Aadhar.pdf" },
         { title: "ITR (Last 2 Years)", file: "Amit_ITR_24_25.pdf" }
       ],
       emis: [],
       history: [
-        { pastId: "LN-0995", amount: "₹4.5L", repaidOn: "-", status: "defaulted", delays: 5 }
+        { pastId: "LN-0995", orderId: "ORD-09011", amount: "₹4.5L", repaidOn: "-", status: "defaulted", delays: 5 }
       ]
     },
     { 
-      id: "LN-2004", retailer: "Sneha Reddy", requested: "₹1.8L", approved: "₹1.8L", duration: "6 months", risk: 92, riskLabel: "Low Risk", status: "completed", date: "05 Jan 2026",
-      documents: [], // Example of a loan with no documents attached
+      id: "LN-2004", orderId: "ORD-12453", retailer: "Sneha Reddy", requested: "₹1.8L", approved: "₹1.8L", duration: "6 months", risk: 92, riskLabel: "Low Risk", status: "completed", date: "05 Jan 2026",
+      documents: [], 
       emis: [
-        { inst: "6/6", dueDate: "05 Jul 2026", amount: "₹31,500", status: "completed" }
+        { inst: "6/6", dueDate: "05 Jul 2026", amount: "₹31,500", outstanding: "₹0", overdue: "0", paymentDetails: "UPI TXN-98921", status: "completed" }
       ],
       history: []
     },
     { 
-      id: "LN-2005", retailer: "Anita Gupta", requested: "₹4.0L", approved: "₹3.5L", duration: "24 months", risk: 72, riskLabel: "Medium Risk", status: "active", date: "15 Jan 2026",
+      id: "LN-2005", orderId: "ORD-12452", retailer: "Anita Gupta", requested: "₹4.0L", approved: "₹3.5L", duration: "24 months", risk: 72, riskLabel: "Medium Risk", status: "active", date: "15 Jan 2026",
       documents: [
         { title: "Business Proof (GST)", file: "Gupta_Supermarket_GST.pdf" }
       ],
       emis: [
-        { inst: "1/24", dueDate: "15 Feb 2026", amount: "₹16,000", status: "completed" },
-        { inst: "2/24", dueDate: "15 Mar 2026", amount: "₹16,000", status: "pending" }
+        { inst: "1/24", dueDate: "15 Feb 2026", amount: "₹16,000", outstanding: "₹3,34,000", overdue: "0", paymentDetails: "Bank Trf Ref-1102", status: "completed" },
+        { inst: "2/24", dueDate: "15 Mar 2026", amount: "₹16,000", outstanding: "₹3,18,000", overdue: "1", paymentDetails: "Payment Failed", status: "pending" }
       ],
       history: [
-        { pastId: "LN-1205", amount: "₹1.5L", repaidOn: "20 Dec 2025", status: "completed", delays: 1 }
+        { pastId: "LN-1205", orderId: "ORD-11200", amount: "₹1.5L", repaidOn: "20 Dec 2025", status: "completed", delays: 1 }
       ]
     }
   ]);

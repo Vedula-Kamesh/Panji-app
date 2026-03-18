@@ -6,26 +6,23 @@ const UserDetail = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  
-  // NEW: State to manage the active tab
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'loans', or 'payments'
+  const [activeTab, setActiveTab] = useState('orders');
 
   useEffect(() => {
     fetchUsers().then(allUsers => setUser(allUsers.find(u => u.id === id) || allUsers[0]));
   }, [id]);
 
-  // Mock Action Handlers
   const handleEditProfile = () => alert(`Opening edit modal for ${user.name}`);
   const handleSuspendUser = () => {
-    const confirm = window.confirm(`Are you sure you want to suspend ${user.name}? They will not be able to place new orders.`);
-    if (confirm) alert('User suspended successfully.');
+    if (window.confirm(`Are you sure you want to suspend ${user.name}? They will not be able to place new orders.`)) {
+      alert('User suspended successfully.');
+    }
   };
 
   if (!user) return <div className="page-content">Loading...</div>;
 
   return (
     <>
-      {/* HEADER & ACTION BUTTONS */}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <button onClick={() => navigate(-1)} className="btn-outline">← Back</button>
@@ -38,7 +35,6 @@ const UserDetail = () => {
           </div>
         </div>
 
-        {/* NEW: Admin Action Buttons */}
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={handleEditProfile} className="btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             ✏️ Edit Profile
@@ -49,7 +45,6 @@ const UserDetail = () => {
         </div>
       </div>
 
-      {/* TOP INFO GRID: User Details & KYC */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '20px' }}>
         <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
           <h3 style={{ color: '#1E293B', marginBottom: '15px' }}>Contact Details</h3>
@@ -73,15 +68,14 @@ const UserDetail = () => {
         <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
           <h3 style={{ color: '#1E293B', marginBottom: '15px' }}>Panji Account Metrics</h3>
           <p style={{ marginBottom: '8px' }}><strong>Total Orders:</strong> <span className="fw-500">{user.orders}</span></p>
-          <p style={{ marginBottom: '8px' }}><strong>Approved Loan Limit:</strong> <span className="fw-500 color-green">{user.loanLimit}</span></p>
-          <p><strong>Platform Rating:</strong> {user.rating} ⭐</p>
+          {/* Updated this field to show Existing Loan instead of Loan Limit */}
+          <p style={{ marginBottom: '8px' }}><strong>Existing Loan:</strong> <span className="fw-500 color-orange">{user.existingLoan}</span></p>
+          <p><strong>Platform Rating:</strong> {user.rating ? `${user.rating} ⭐` : 'N/A'}</p>
         </div>
       </div>
 
-      {/* TABBED INTERFACE FOR HISTORY */}
       <div style={{ marginTop: '30px', background: 'white', borderRadius: '12px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
         
-        {/* Tab Controls */}
         <div style={{ display: 'flex', borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
           <button 
             onClick={() => setActiveTab('orders')}
@@ -103,10 +97,7 @@ const UserDetail = () => {
           </button>
         </div>
 
-        {/* Tab Content Areas */}
         <div style={{ padding: '0' }}>
-          
-          {/* ORDERS TAB */}
           {activeTab === 'orders' && (
             <table className="data-table">
               <thead><tr><th>Order ID</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
@@ -116,8 +107,6 @@ const UserDetail = () => {
               </tbody>
             </table>
           )}
-
-          {/* LOANS TAB */}
           {activeTab === 'loans' && (
             <table className="data-table">
               <thead><tr><th>Loan ID</th><th>Requested</th><th>Approved</th><th>Duration</th><th>Status</th><th>Action</th></tr></thead>
@@ -127,8 +116,6 @@ const UserDetail = () => {
               </tbody>
             </table>
           )}
-
-          {/* PAYMENTS TAB */}
           {activeTab === 'payments' && (
             <table className="data-table">
               <thead><tr><th>Txn ID</th><th>Date</th><th>Reference</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
@@ -138,7 +125,6 @@ const UserDetail = () => {
               </tbody>
             </table>
           )}
-
         </div>
       </div>
     </>

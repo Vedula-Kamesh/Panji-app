@@ -49,7 +49,7 @@ const Users = () => {
             className="btn-outline" 
             onClick={() => downloadCSV(filteredData, 'Panji_Users_Export')}
           >
-            Export
+            Export Users
           </button>
         </div>
       </div>
@@ -58,7 +58,7 @@ const Users = () => {
           <thead>
             <tr>
               <th>User ID</th><th>Name</th><th>Mobile</th><th>Orders</th>
-              <th>Loan Limit</th><th>Rating</th><th>Status</th><th>Actions</th>
+              <th>Existing Loan</th><th>Rating</th><th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -69,7 +69,9 @@ const Users = () => {
                   <div className="user-name">{u.name}</div>
                   {u.verified && <span className="badge-verified">Verified</span>}
                 </td>
-                <td>{u.mobile}</td><td>{u.orders}</td><td>{u.loanLimit}</td>
+                <td>{u.mobile}</td><td>{u.orders}</td>
+                {/* Updated existing loan display */}
+                <td className="fw-500 color-orange">{u.existingLoan}</td>
                 <td>{u.rating ? `${u.rating} ⭐` : 'N/A'}</td>
                 <td><span className={`status-badge ${u.status}`}>{u.status}</span></td>
                 <td className="table-actions">

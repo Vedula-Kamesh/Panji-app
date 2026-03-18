@@ -27,7 +27,7 @@ const OrderDetail = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginTop: '20px' }}>
         
-        {/* Left Column */}
+        {/* LEFT COLUMN: Details & Items */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -37,7 +37,6 @@ const OrderDetail = () => {
               <div><p style={{ color: '#64748B', fontSize: '13px', margin: '0 0 5px 0' }}>Loan Used</p><p className="fw-500 color-orange" style={{ margin: 0 }}>{order.loanUsed}</p></div>
             </div>
             
-            {/* NEW: Payment Proof Button */}
             {order.paymentProof && (
               <button onClick={() => alert(`Opening ${order.paymentProof} in image viewer...`)} style={{ background: '#E0F2FE', color: '#0369A1', padding: '10px 15px', border: '1px solid #BAE6FD', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
                 🖼️ View Payment Proof
@@ -58,25 +57,63 @@ const OrderDetail = () => {
           </div>
         </div>
 
-        {/* Right Column: Tracking */}
-        <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', height: 'fit-content' }}>
-          <h3 style={{ marginBottom: '20px' }}>Order Tracking</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative' }}>
-            {order.tracking?.map((track, idx) => (
-              <div key={idx} style={{ display: 'flex', gap: '15px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: track.done ? '#10B981' : '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
-                  {track.done && <span style={{ color: 'white', fontSize: '10px' }}>✓</span>}
+        {/* RIGHT COLUMN: Tracking & Confirmation */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Tracking Timeline */}
+          <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <h3 style={{ marginBottom: '20px' }}>Order Tracking</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative' }}>
+              {order.tracking?.map((track, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: '15px' }}>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: track.done ? '#10B981' : '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+                    {track.done && <span style={{ color: 'white', fontSize: '10px' }}>✓</span>}
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: track.done ? '#1E293B' : '#94A3B8' }}>{track.step}</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748B', marginTop: '4px' }}>{track.time}</p>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ margin: 0, fontWeight: 'bold', color: track.done ? '#1E293B' : '#94A3B8' }}>{track.step}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748B', marginTop: '4px' }}>{track.time}</p>
-                </div>
-              </div>
-            ))}
-            <div style={{ position: 'absolute', left: '9px', top: '10px', bottom: '20px', width: '2px', background: '#E2E8F0', zIndex: 1 }}></div>
+              ))}
+              <div style={{ position: 'absolute', left: '9px', top: '10px', bottom: '20px', width: '2px', background: '#E2E8F0', zIndex: 1 }}></div>
+            </div>
           </div>
-        </div>
 
+          {/* NEW: Retailer Delivery Confirmation Card */}
+          {order.retailerConfirmation && order.status !== 'failed' && (
+            <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+              <h3 style={{ marginBottom: '15px' }}>Delivery Confirmation</h3>
+              
+              {order.retailerConfirmation.status === 'Confirmed' ? (
+                <div style={{ padding: '15px', background: '#DCFCE7', borderRadius: '8px', border: '1px solid #4ADE80' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span style={{ background: '#166534', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>✓</span>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#166534' }}>Confirmed by Retailer</p>
+                  </div>
+                  <p style={{ margin: '0 0 5px 34px', fontSize: '13px', color: '#166534' }}><strong>Time:</strong> {order.retailerConfirmation.date}</p>
+                  <p style={{ margin: '0 0 0 34px', fontSize: '13px', color: '#166534' }}><strong>Method:</strong> {order.retailerConfirmation.method}</p>
+                </div>
+              ) : (
+                <div style={{ padding: '15px', background: '#FEF3C7', borderRadius: '8px', border: '1px solid #FBBF24' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span style={{ background: '#D97706', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>⌛</span>
+                    <p style={{ margin: 0, fontWeight: 'bold', color: '#92400E' }}>Awaiting Confirmation</p>
+                  </div>
+                  <p style={{ margin: '0 0 15px 34px', fontSize: '13px', color: '#92400E' }}>The retailer has not yet confirmed the receipt of this delivery.</p>
+                  <div style={{ paddingLeft: '34px' }}>
+                    <button 
+                      onClick={() => alert('Verification link/OTP resent to retailer via SMS.')} 
+                      style={{ background: 'white', color: '#D97706', border: '1px solid #FCD34D', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                      Resend OTP / Link
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+        </div>
       </div>
     </>
   );
